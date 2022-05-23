@@ -1,0 +1,52 @@
+Public Sub SSendEMail()
+    Dim xOLApp As Object
+    On Error GoTo L1
+    Set xOLApp = CreateObject("Outlook.Application")
+    If Not xOLApp Is Nothing Then
+    
+         
+        Dim OutApp  As Object
+        Set OutApp = OutlookApp()
+ 
+        Set OutlNameSpace = OutApp.GetNamespace("MAPI")
+
+        Set OutlMail = OutApp.CreateItem(0)
+
+        With OutlMail
+
+            .To = "gggg@ggggggg.com"
+            .Subject = Me.VGAArticleNo & " cost estimate"
+  
+            Dim CurFileName As String, CurFileLink As String, NewFileName As String, NewFileLink As String, BodyText As String, BodyTextLinks As String, FinalPath As String
+            Dim RsLoopFIlesToEMail As Object
+            Dim Attachments As Long, NumberOfLinks As Long, IsZIPFile As Long, VSendTheFile As Long
+                
+            BodyText1 = "Hello, "
+            BodyText3 = "ggggg." & vbCrLf & vbCrLf & _
+                        "ALSC Name: " & Me.ALSCName & vbCrLf & _
+                        "Contact: " & Me.Contact & vbCrLf & _
+                        "Delivery Address 1: " & Me.DeliveryAddress1 & vbCrLf & _
+                        "Delivery Address 2: " & Me.DeliveryAddress2 & vbCrLf & _
+                        "Delivery Address 3: " & Me.DeliveryAddress3 & vbCrLf & _
+                        "Country: " & DLookup("Country", "CmbCountries", "CountryID=" & Me.CountryID) & vbCrLf & _
+                        "Project Name: " & Me.ProjectName & vbCrLf
+        
+            .BodyFormat = 2
+            .Body = BodyText1 & vbCrLf & vbCrLf & BodyText3
+            ' .Body = BodyText1
+         
+            Call FSaveReportToFolder("_" & Me.VGAArticleNo & ".rtf", "ROrder", "RichTextFormat(*.rtf)", False)
+            Call FSaveReportToFolder("_" & Me.VGAArticleNo & ".pdf", "ROrderPdf", "acFormatPDF", False)
+        
+            .Attachments.Add VPDF
+            .Attachments.Add VRTF
+              '  .Display
+          .send
+            VNoOutlook = True
+        End With
+        
+        Set xOLApp = Nothing
+        Exit Sub
+    End If
+L1:                           VNoOutlook = False
+End Sub
